@@ -35,18 +35,21 @@ void p_tof_init() {
 
 void Task_ToFRead(void *pvParameters) {
     for (;;) {
-        // This single-shot read is blocking. The Wire library will yield 
-        // the CPU during I2C clock stretching, allowing other tasks to run.
+        // 1. Block for measurement
         uint16_t distance = tof_sensor.readRangeSingleMillimeters();
         
-        // Filter out bad data: timeouts or hardware noise beyond our stated max range
+        // 2. Capture the exact acquisition time and angle
+        uint32_t acquired_time = millis(); 
+        uint16_t acquired_angle = g_current_servo_angle;
+        
         if (tof_sensor.timeoutOccurred() || distance > TOF_MAX_DISTANCE_MM) {
             distance = TOF_MAX_DISTANCE_MM;
         }
         
-        // Write to the global state
+        // 3. Write all synchronized data to the global state
         g_robot_state.tof.distance_mm = distance;
-        g_robot_state.tof.servo_angle_deg = g_current_servo_angle;
+        g_robot_state.tof.servo_angle_deg = acquired_angle;
+        g_robot_state.tof.timestamp_ms = acquired_time;
 
         // Block until it's time for the next 50Hz read
         vTaskDelay(pdMS_TO_TICKS(1000 / TASK_TOF_FREQ_HZ));

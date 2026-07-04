@@ -63,5 +63,6 @@ void MotorWriteTimerCallback(TimerHandle_t xTimer) {
 
         // Update the current state to reflect what the hardware is actually doing
         g_robot_state.motors[i].current_pwm = target;
+        g_robot_state.motors[i].timestamp_ms = millis();
     }
 }

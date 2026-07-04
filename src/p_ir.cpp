@@ -15,18 +15,13 @@ void p_ir_init() {
 }
 
 void IRSensorTimerCallback(TimerHandle_t xTimer) {
+    uint32_t current_time = millis(); // Time of poll
+    
     for (int i = 0; i < 2; i++) {
         uint8_t pin = ROBOT_PINOUT.ir_sensor[i].pin;
-        
-        // Read the digital state of the IR sensor
         int pin_state = digitalRead(pin);
 
-        // Assume Active-Low: Most LM393-based IR sensors output LOW when triggered.
-        // If your sensors output HIGH when triggered, change 'LOW' to 'HIGH' below.
-        if (pin_state == LOW) {
-            g_robot_state.irs[i].is_triggered = true;
-        } else {
-            g_robot_state.irs[i].is_triggered = false;
-        }
+        g_robot_state.irs[i].is_triggered = (pin_state == LOW);
+        g_robot_state.irs[i].timestamp_ms = current_time;
     }
 }

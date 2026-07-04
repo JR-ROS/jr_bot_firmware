@@ -14,6 +14,8 @@
 #include "p_ir.hpp"
 #include "p_uart.hpp"
 
+#include "sbc_comms.hpp"
+
 // ==========================================
 // GLOBALS & RTOS HANDLES
 // ==========================================
