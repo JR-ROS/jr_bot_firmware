@@ -31,20 +31,20 @@ constexpr uint16_t TOF_MAX_DISTANCE_MM = 1200; // Maximum distance the ToF senso
 
 constexpr RobotPinout ROBOT_PINOUT = {
     .motors = {
-        [0] = { .forward_pin = 13, .reverse_pin = 12, .pwm_pin = 0, .pwm_channel = 0 }, // Left Motor
-        [1] = { .forward_pin = 14, .reverse_pin = 27, .pwm_pin = 0, .pwm_channel = 1 }  // Right Motor
+        [0] = { .forward_pin = 13, .reverse_pin = 12, .pwm_pin = 16, .pwm_channel = 0 }, // Left Motor
+        [1] = { .forward_pin = 14, .reverse_pin = 27, .pwm_pin = 17, .pwm_channel = 1 }  // Right Motor
     },
 
     .i2c = {
-        [0] = { .sda_pin = 25, .scl_pin = 4 }, // IMU
+        [0] = { .sda_pin = 33, .scl_pin = 5 }, // IMU
         [1] = { .sda_pin = 21, .scl_pin = 22 }  // ToF
     },
 
     .tof_servo = { .pin = 18, .pwm_channel = 2 },
 
     .ir_sensor = {
-        [0] = { .pin = 34 }, // Left IR
-        [1] = { .pin = 35 }  // Right IR
+        [0] = { .pin = 25 }, // Left IR
+        [1] = { .pin = 26 }  // Right IR
     },
 };
 
