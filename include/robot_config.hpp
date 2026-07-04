@@ -1,7 +1,7 @@
 #ifndef ROBOT_CONFIG_H
 #define ROBOT_CONFIG_H
 
-#include "robot_pinout_types.h"
+#include "robot_pinout_types.hpp"
 
 // ==========================================
 // SYSTEM & TIMING CONTEXT
@@ -19,6 +19,7 @@ constexpr uint8_t TASK_TOF_FREQ_HZ    = 50;
 // ==========================================
 constexpr int16_t MOTOR_PWM_MAX       = 255;
 
+constexpr uint16_t SERVO_MIN_ANGLE    = 0;
 constexpr uint16_t SERVO_MAX_ANGLE    = 180;
 constexpr uint16_t SERVO_SWEEP_DURATION_MS = 2000; // Time for a full sweep from min to max angle
 
