@@ -28,11 +28,17 @@ typedef struct {
     uint8_t pin;
 } IRConfig;
 
+// Represents the configuration for a single user-defined LED
+typedef struct {
+    uint8_t pin;
+} LEDConfig;
+
 typedef struct {
     MotorConfig motors[2];  // 0 is left, 1 is right
     I2CConfig i2c[2];  // 0 is IMU, 1 is ToF
     ServoConfig tof_servo;
     IRConfig ir_sensor[2];  // 0 is left, 1 is right
+    LEDConfig leds[2];  // 0 is left, 1 is right
 } RobotPinout;
 
 #endif // ROBOT_PINOUT_H

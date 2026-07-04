@@ -39,4 +39,5 @@ Include the conventions header along with BotSpeak headers.
 | 0x43 | response | tof state | 2 uint_16 | mm, deg | - | tof sweep on/off | false |
 | 0x44 | response | ir states | 2 bool | - | - | - | false |
 | 0x60 | commands | motor desired pwm | 2 int_16 | effort | - | - | false |
+| 0x61 | commands | user defined LED | 1 bool | - | - | - | false |
 | 0x81 | emergency | emergency stop | 1 bool | - | - | - | false |

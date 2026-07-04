@@ -13,6 +13,8 @@ constexpr uint8_t TASK_MOTOR_FREQ_HZ  = 100;
 constexpr uint8_t TASK_IMU_FREQ_HZ    = 50;
 constexpr uint8_t TASK_IR_FREQ_HZ     = 20;
 constexpr uint8_t TASK_TOF_FREQ_HZ    = 50;
+constexpr uint8_t TASK_SERVO_FREQ_HZ  = 50;
+constexpr uint8_t TASK_COMMS_FREQ_HZ  = 100;
 
 // ==========================================
 // HARDWARE CONSTRAINTS
@@ -46,6 +48,11 @@ constexpr RobotPinout ROBOT_PINOUT = {
         [0] = { .pin = 25 }, // Left IR
         [1] = { .pin = 26 }  // Right IR
     },
+
+    .leds = {
+        { .pin = 2 },  // Status LED (ESP32 Built-in)
+        { .pin = 15 }  // User LED (ROS 2 controlled)
+    }
 };
 
 #endif // ROBOT_CONFIG_H

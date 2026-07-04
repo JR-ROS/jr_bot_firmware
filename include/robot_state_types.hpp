@@ -34,12 +34,19 @@ typedef struct {
     uint32_t timestamp_ms;
 } IRState;
 
+// Represents the state of a single user-defined LED
+typedef struct {
+    bool is_on;
+    uint32_t timestamp_ms; 
+} LEDState;
+
 // The global state of the robot, to be protected by a FreeRTOS Mutex
 typedef struct {
     MotorState motors[2];
     IMUState imu;
     TOFState tof;
     IRState irs[2];
+    LEDState leds[2];
     uint32_t timestamp_ms; // System time of the last full update
 } RobotState;
 

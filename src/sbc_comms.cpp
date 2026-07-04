@@ -1,6 +1,7 @@
 #include "sbc_comms.hpp"
 #include "jr_bot_messages.hpp"
 #include "robot_state_types.hpp"
+#include "robot_config.hpp"
 #include <Arduino.h>
 
 // Extern the global state to read sensor data and write motor commands
@@ -132,6 +133,7 @@ int comms_parse_request_frame(DataFrame_TypeDef* frame) {
 int comms_parse_command_frame(DataFrame_TypeDef* frame) {
     uint32_t deserialized_elements = 0;
     int16_t pwm_buf[2];
+    bool led_buf[1];
 
     switch (frame->frameID) {
         case MOTOR_DESIRED_PWM:
@@ -142,6 +144,21 @@ int comms_parse_command_frame(DataFrame_TypeDef* frame) {
             if (deserialized_elements == UNSERIALIZED_MOTOR_DESIRED_PWM_SIZE) {
                 g_robot_state.motors[0].target_pwm = pwm_buf[0];
                 g_robot_state.motors[1].target_pwm = pwm_buf[1];
+            }
+            break;
+
+        case USER_DEFINED_LED:
+            botSpeak_deserialize(led_buf, &deserialized_elements, sizeof(bool), frame->data, frame->dataLength);
+            
+            if (deserialized_elements == UNSERIALIZED_USER_DEFINED_LED_SIZE) {
+                bool target_state = led_buf[0];
+                uint8_t user_pin = ROBOT_PINOUT.leds[1].pin;
+                
+                digitalWrite(user_pin, target_state ? HIGH : LOW);
+                
+                // Update global state and timestamp
+                g_robot_state.leds[1].is_on = target_state;
+                g_robot_state.leds[1].timestamp_ms = millis();
             }
             break;
 

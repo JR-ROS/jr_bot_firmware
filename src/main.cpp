@@ -13,6 +13,8 @@
 #include "p_motors.hpp"
 #include "p_ir.hpp"
 #include "p_uart.hpp"
+#include "p_led.hpp"
+#include "p_imu.hpp"
 
 #include "sbc_comms.hpp"
 
@@ -35,6 +37,8 @@ TimerHandle_t IRSensorTimer;
 TaskHandle_t ServoCalcTask;
 TaskHandle_t TofReadTask;
 TaskHandle_t CommsParseTask;
+TaskHandle_t StatusLEDTask;
+TaskHandle_t ImuReadTask;
 
 // ==========================================
 // ARDUINO SETUP & LOOP
@@ -47,20 +51,25 @@ void setup() {
     p_tof_init();
     p_ir_init();
     p_uart_init();
+    p_led_init();
+    p_imu_init();
 
     // 2. Queue Creation
     rx_packet_queue = xQueueCreate(5, MAX_PACKET_BUFFER_SIZE);
 
     // 3. Timer Creation
     MotorWriteTimer = xTimerCreate("MotorTmr", pdMS_TO_TICKS(1000 / TASK_MOTOR_FREQ_HZ), pdTRUE, (void *)0, MotorWriteTimerCallback);
-    ServoWriteTimer = xTimerCreate("ServoWrTmr", pdMS_TO_TICKS(1000 / 50), pdTRUE, (void *)0, ServoWriteTimerCallback);
+    ServoWriteTimer = xTimerCreate("ServoWrTmr", pdMS_TO_TICKS(1000 / TASK_SERVO_FREQ_HZ), pdTRUE, (void *)0, ServoWriteTimerCallback);
     IRSensorTimer = xTimerCreate("IRTmr", pdMS_TO_TICKS(1000 / TASK_IR_FREQ_HZ), pdTRUE, (void *)0, IRSensorTimerCallback);
-    CommsRxTimer = xTimerCreate("CommsRxTmr", pdMS_TO_TICKS(10), pdTRUE, (void *)0, CommsRxTimerCallback);
+    CommsRxTimer = xTimerCreate("CommsRxTmr", pdMS_TO_TICKS(1000 / TASK_COMMS_FREQ_HZ), pdTRUE, (void *)0, CommsRxTimerCallback);
 
     // 4. Task Creation
     xTaskCreate(Task_ServoCalc, "ServoCalc", 2048, NULL, 1, &ServoCalcTask);
     xTaskCreate(Task_ToFRead, "TofRead", 2048, NULL, 1, &TofReadTask);
+    xTaskCreate(Task_StatusLED, "StatusLED", 1024, NULL, 1, &StatusLEDTask); // No need to keep a handle for the status LED task
+    
     xTaskCreate(Task_CommsParse, "CommsParse", 4096, NULL, 2, &CommsParseTask); 
+    xTaskCreate(Task_IMURead, "ImuRead", 4096, NULL, 2, &ImuReadTask);
 
     // 5. Start Execution
     xTimerStart(MotorWriteTimer, 0);

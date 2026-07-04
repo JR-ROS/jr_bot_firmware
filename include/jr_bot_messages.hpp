@@ -30,6 +30,7 @@ enum ResponseFrameIDs {
 
 enum CommandsFrameIDs {
 	MOTOR_DESIRED_PWM = 0x60,
+	USER_DEFINED_LED = 0x61
 };
 
 enum EmergencyFrameIDs {
@@ -37,11 +38,12 @@ enum EmergencyFrameIDs {
 };
 
 enum SerializedDataSizes {
-	SERIALIZED_IMU_GYRO_RAW_BYTES = 12,    // 3 * 4 bytes (float32)
-	SERIALIZED_IMU_ACCEL_RAW_BYTES = 12,   // 3 * 4 bytes (float32)
-	SERIALIZED_TOF_STATE_BYTES = 4,        // 2 * 2 bytes (uint16_t dist, uint16_t angle)
-	SERIALIZED_IR_STATES_BYTES = 2,        // 2 * 1 byte (bool)
-	SERIALIZED_MOTOR_DESIRED_PWM_BYTES = 4, // 2 * 2 bytes (int16_t left, int16_t right)
+	SERIALIZED_IMU_GYRO_RAW_BYTES = 12,    	// 3 * 4 bytes (float32)
+	SERIALIZED_IMU_ACCEL_RAW_BYTES = 12,   	// 3 * 4 bytes (float32)
+	SERIALIZED_TOF_STATE_BYTES = 4,        	// 2 * 2 bytes (uint16_t dist, uint16_t angle)
+	SERIALIZED_IR_STATES_BYTES = 2,        	// 2 * 1 byte (bool)
+	SERIALIZED_MOTOR_DESIRED_PWM_BYTES = 4,	// 2 * 2 bytes (int16_t left, int16_t right)
+	SERIALIZED_USER_DEFINED_LED_BYTES = 1, 	// 1 * 1 byte (bool)
 };
 
 enum UnserializedDataSizes {
@@ -50,6 +52,7 @@ enum UnserializedDataSizes {
 	UNSERIALIZED_TOF_STATE_SIZE = 2,
 	UNSERIALIZED_IR_STATES_SIZE = 2,
 	UNSERIALIZED_MOTOR_DESIRED_PWM_SIZE = 2,
+	UNSERIALIZED_USER_DEFINED_LED_SIZE = 1,
 };
 
 
