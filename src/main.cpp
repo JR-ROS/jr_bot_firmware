@@ -60,8 +60,8 @@ void setup() {
     xTaskCreate(Task_ToFRead, "TofRead", 2048, NULL, 1, &TofReadTask);
     xTaskCreate(Task_StatusLED, "StatusLED", 1024, NULL, 1, &StatusLEDTask); // No need to keep a handle for the status LED task
     
-    xTaskCreate(Task_CommsParse, "CommsParse", 4096, NULL, 2, &CommsParseTask); 
-    xTaskCreate(Task_IMURead, "ImuRead", 4096, NULL, 2, &ImuReadTask);
+    xTaskCreate(Task_CommsParse, "CommsParse", 4096, NULL, 1, &CommsParseTask); 
+    xTaskCreate(Task_IMURead, "ImuRead", 4096, NULL, 1, &ImuReadTask);
 
     // 5. Start Execution
     xTimerStart(MotorWriteTimer, 0);

@@ -1,55 +1,44 @@
 #include "p_servo.hpp"
 #include "robot_config.hpp"
-#include <ESP32Servo.h>
+#include <Arduino.h>
 
-// The global target angle. 
-// Task_ServoCalc updates this, and Task_ToFRead bundles it with distance measurements.
-volatile uint16_t g_current_servo_angle = SERVO_MAX_ANGLE / 2;
+// Explicitly define a channel that DOES NOT overlap with motors (0 and 1)
+#define SERVO_FREQ 50          // 50Hz for standard servos
+#define SERVO_RESOLUTION 16    // 16-bit precision
 
-// Static instance of the servo object
-static Servo tof_servo;
+// Duty cycle limits for 50Hz (20ms period)
+// 1ms pulse (0 deg)  = (1ms / 20ms) * 65536 = 3277
+// 2ms pulse (180 deg)= (2ms / 20ms) * 65536 = 6554
+#define DUTY_MIN 3277
+#define DUTY_MAX 6554
+
+// The global target angle
+volatile uint16_t g_current_servo_angle = 90; // Default to center
 
 void p_servo_init() {
-    // Allocate hardware timers to prevent conflicts
-    ESP32PWM::allocateTimer(0);
-    ESP32PWM::allocateTimer(1);
-    ESP32PWM::allocateTimer(2);
-    ESP32PWM::allocateTimer(3);
-    
-    // Standard analog servos expect a 50Hz update rate
-    tof_servo.setPeriodHertz(50); 
-    
-    // Attach the servo using the config definitions for pin and pulse widths
-    tof_servo.attach(ROBOT_PINOUT.tof_servo.pin);
+    // Configure LEDC: 50Hz, 16-bit resolution
+    ledcSetup(ROBOT_PINOUT.tof_servo.pwm_channel, SERVO_FREQ, SERVO_RESOLUTION);
+    ledcAttachPin(ROBOT_PINOUT.tof_servo.pin, ROBOT_PINOUT.tof_servo.pwm_channel);
 }
 
 void ServoWriteTimerCallback(TimerHandle_t xTimer) {
-    // Pushes the latest calculated angle to the hardware at a fixed 50Hz
-    tof_servo.write(g_current_servo_angle);
+    // Convert angle (0-180) to duty cycle (3277-6554)
+    uint32_t duty = map(g_current_servo_angle, SERVO_MIN_ANGLE, SERVO_MAX_ANGLE, DUTY_MIN, DUTY_MAX);
+    ledcWrite(ROBOT_PINOUT.tof_servo.pwm_channel, duty);
 }
 
 void Task_ServoCalc(void *pvParameters) {
-    int8_t sweep_direction = 1; // 1 for increasing, -1 for decreasing
-    
-    // Calculate the delay needed per degree to match SERVO_SWEEP_DURATION_MS
-    // e.g., 2000ms / 180 degrees = ~11ms per degree
+    int8_t sweep_direction = 1;
     const TickType_t delay_per_degree = pdMS_TO_TICKS(SERVO_SWEEP_DURATION_MS / SERVO_MAX_ANGLE);
 
     for (;;) {
-        // Increment or decrement the angle
         if (sweep_direction == 1) {
-            g_current_servo_angle++;
-            if (g_current_servo_angle >= SERVO_MAX_ANGLE) {
-                sweep_direction = -1;
-            }
+            if (g_current_servo_angle < SERVO_MAX_ANGLE) g_current_servo_angle++;
+            else sweep_direction = -1;
         } else {
-            g_current_servo_angle--;
-            if (g_current_servo_angle <= SERVO_MIN_ANGLE) {
-                sweep_direction = 1;
-            }
+            if (g_current_servo_angle > SERVO_MIN_ANGLE) g_current_servo_angle--;
+            else sweep_direction = 1;
         }
-
-        // Yield the CPU until it's time to increment the next degree
         vTaskDelay(delay_per_degree);
     }
 }
