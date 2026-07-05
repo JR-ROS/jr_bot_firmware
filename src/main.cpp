@@ -24,13 +24,9 @@
 
 RobotState g_robot_state = {0};
 
-// Queues
-QueueHandle_t rx_packet_queue;
-
 // Timers
 TimerHandle_t MotorWriteTimer;
 TimerHandle_t ServoWriteTimer;
-TimerHandle_t CommsRxTimer;
 TimerHandle_t IRSensorTimer;
 
 // Tasks
@@ -54,14 +50,10 @@ void setup() {
     p_led_init();
     p_imu_init();
 
-    // 2. Queue Creation
-    rx_packet_queue = xQueueCreate(5, MAX_PACKET_BUFFER_SIZE);
-
     // 3. Timer Creation
     MotorWriteTimer = xTimerCreate("MotorTmr", pdMS_TO_TICKS(1000 / TASK_MOTOR_FREQ_HZ), pdTRUE, (void *)0, MotorWriteTimerCallback);
     ServoWriteTimer = xTimerCreate("ServoWrTmr", pdMS_TO_TICKS(1000 / TASK_SERVO_FREQ_HZ), pdTRUE, (void *)0, ServoWriteTimerCallback);
     IRSensorTimer = xTimerCreate("IRTmr", pdMS_TO_TICKS(1000 / TASK_IR_FREQ_HZ), pdTRUE, (void *)0, IRSensorTimerCallback);
-    CommsRxTimer = xTimerCreate("CommsRxTmr", pdMS_TO_TICKS(1000 / TASK_COMMS_FREQ_HZ), pdTRUE, (void *)0, CommsRxTimerCallback);
 
     // 4. Task Creation
     xTaskCreate(Task_ServoCalc, "ServoCalc", 2048, NULL, 1, &ServoCalcTask);
@@ -75,7 +67,6 @@ void setup() {
     xTimerStart(MotorWriteTimer, 0);
     xTimerStart(ServoWriteTimer, 0);
     xTimerStart(IRSensorTimer, 0);
-    xTimerStart(CommsRxTimer, 0);
     
     // The FreeRTOS scheduler starts automatically after setup() in the ESP32 Arduino Core
 }

@@ -6,7 +6,7 @@
 // ==========================================
 // SYSTEM & TIMING CONTEXT
 // ==========================================
-constexpr uint32_t USB_BAUD_RATE      = 115200;
+constexpr uint32_t USB_BAUD_RATE      = 2000000;
 
 // FreeRTOS Task Frequencies (in Hz)
 constexpr uint8_t TASK_MOTOR_FREQ_HZ  = 100;
