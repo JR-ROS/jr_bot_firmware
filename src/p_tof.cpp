@@ -1,6 +1,7 @@
 #include "p_tof.hpp"
 #include "robot_config.hpp"
 #include "robot_state_types.hpp"
+#include "p_led.hpp"
 
 #include <Wire.h>
 #include <VL53L0X.h>
@@ -24,19 +25,22 @@ void p_tof_init() {
     
     // Set a timeout so the task doesn't hang indefinitely on a disconnected wire
     tof_sensor.setTimeout(100); 
+
     
     if (!tof_sensor.init()) {
-        // Silently fail for the course kit, but real robots would log an error here
+        g_status_led_delay_ms = LED_ERROR_DELAY;
     }
+
+    tof_sensor.startContinuous();
     
     // Set timing budget to 20ms to ensure we can hit the 50Hz (20ms) task rate
-    tof_sensor.setMeasurementTimingBudget(20000); 
+    // tof_sensor.setMeasurementTimingBudget(20000); 
 }
 
 void Task_ToFRead(void *pvParameters) {
     for (;;) {
         // 1. Block for measurement
-        uint16_t distance = tof_sensor.readRangeSingleMillimeters();
+        uint16_t distance = tof_sensor.readRangeContinuousMillimeters();
         
         // 2. Capture the exact acquisition time and angle
         uint32_t acquired_time = millis(); 
@@ -50,6 +54,7 @@ void Task_ToFRead(void *pvParameters) {
         g_robot_state.tof.distance_mm = distance;
         g_robot_state.tof.servo_angle_deg = acquired_angle;
         g_robot_state.tof.timestamp_ms = acquired_time;
+        
 
         // Block until it's time for the next 50Hz read
         vTaskDelay(pdMS_TO_TICKS(1000 / TASK_TOF_FREQ_HZ));
