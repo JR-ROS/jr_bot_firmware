@@ -4,13 +4,13 @@
 
 // Explicitly define a channel that DOES NOT overlap with motors (0 and 1)
 #define SERVO_FREQ 50          // 50Hz for standard servos
-#define SERVO_RESOLUTION 16    // 16-bit precision
+#define SERVO_RESOLUTION 12    // 12-bit precision
 
 // Duty cycle limits for 50Hz (20ms period)
-// 1ms pulse (0 deg)  = (1ms / 20ms) * 65536 = 3277
-// 2ms pulse (180 deg)= (2ms / 20ms) * 65536 = 6554
-#define DUTY_MIN 3277
-#define DUTY_MAX 6554
+// 1ms pulse (0 deg)  = (1ms / 20ms) * 4096 = 204.8
+// 2ms pulse (180 deg)= (2ms / 20ms) * 4096 = 409.6
+#define DUTY_MIN 102
+#define DUTY_MAX 492
 
 // The global target angle
 volatile uint16_t g_current_servo_angle = 90; // Default to center

@@ -40,16 +40,16 @@ void p_tof_init() {
 void Task_ToFRead(void *pvParameters) {
     for (;;) {
         // 1. Block for measurement
-        uint16_t distance = tof_sensor.readRangeContinuousMillimeters();
+        uint16_t distance = tof_sensor.readRangeContinuousMillimeters() - TOF_OFFSET_MM;
         
         // 2. Capture the exact acquisition time and angle
         uint32_t acquired_time = millis(); 
         uint16_t acquired_angle = g_current_servo_angle;
         
-        if (tof_sensor.timeoutOccurred() || distance > TOF_MAX_DISTANCE_MM) {
+        if (tof_sensor.timeoutOccurred() || distance > TOF_MAX_DISTANCE_MM || distance < 0) {
             distance = TOF_MAX_DISTANCE_MM;
         }
-        
+
         // 3. Write all synchronized data to the global state
         g_robot_state.tof.distance_mm = distance;
         g_robot_state.tof.servo_angle_deg = acquired_angle;

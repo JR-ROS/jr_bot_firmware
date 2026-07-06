@@ -25,7 +25,9 @@ constexpr uint16_t SERVO_MIN_ANGLE    = 0;
 constexpr uint16_t SERVO_MAX_ANGLE    = 180;
 constexpr uint16_t SERVO_SWEEP_DURATION_MS = 2000; // Time for a full sweep from min to max angle
 
-constexpr uint16_t TOF_MAX_DISTANCE_MM = 1200; // Maximum distance the ToF sensor can measure
+constexpr uint16_t TOF_MAX_DISTANCE_MM = 8000; // Maximum distance the ToF sensor can measure
+
+constexpr uint16_t TOF_OFFSET_MM = 61; // Offset to account for the physical placement of the ToF sensor
 
 // ==========================================
 // PINOUT ALLOCATIONS
