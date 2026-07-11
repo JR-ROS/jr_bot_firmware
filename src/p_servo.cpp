@@ -23,6 +23,7 @@ void p_servo_init() {
 
 void ServoWriteTimerCallback(TimerHandle_t xTimer) {
     // Convert angle (0-180) to duty cycle (3277-6554)
+    // g_current_servo_angle = 90;
     uint32_t duty = map(g_current_servo_angle, SERVO_MIN_ANGLE, SERVO_MAX_ANGLE, DUTY_MIN, DUTY_MAX);
     ledcWrite(ROBOT_PINOUT.tof_servo.pwm_channel, duty);
 }
